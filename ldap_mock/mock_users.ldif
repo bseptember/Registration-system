@@ -1,0 +1,28 @@
+dn: uid=abcd68bb-a3c3-4f7d-aefe-a70b84e09e1f,dc=example,dc=org
+uid: abcd68bb-a3c3-4f7d-aefe-a70b84e09e1f
+givenName: Takalani
+sn: Sesame
+cn: Takalani
+userPassword: 1234
+objectClass: inetOrgPerson
+mail: takalani@sesame.net
+
+dn: uid=f37f3951-97c1-468f-9638-6352ae74b646,dc=example,dc=org
+uid: f37f3951-97c1-468f-9638-6352ae74b646
+givenName: Devan
+sn: Koeppke
+cn: Devan
+userPassword: ApgOdU
+objectClass: inetOrgPerson
+mail: dkoeppkev@businessinsider.com
+
+dn:uid=f37f3951-97c1-468f-9638-6352ae74b646,dc=example,dc=org
+uid:f37f3951-97c1-468f-9638-6352ae74b646
+givenName:Jefferson
+sn:Pesos
+cn:Jeff
+userPassword:1234
+objectClass:inetOrgPerson
+mail:jeff@microsoft.com
+
+

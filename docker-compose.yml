@@ -1,0 +1,87 @@
+version: '3'
+services:
+# use start-dev for testing and start for production.
+# Remember to change the rabbitmq.conf file as well to http://ipaddr:8080
+  oidc_kc:
+    container_name: oidc
+    image: quay.io/keycloak/keycloak:20.0
+    entrypoint: /opt/modify_postgres.sh
+    command: >
+      -v start
+      --import-realm 
+      --db postgres 
+      --db-url-host ${LOCAL_IP}
+      --db-username postgres 
+      --db-password postgres 
+      --https-certificate-file /opt/keycloak/conf/keycloak.crt 
+      --https-certificate-key-file /opt/keycloak/conf/keycloak.key
+    ports:
+      - "8080:8080"
+      - "8443:8443"
+    volumes:
+      - /home/duser/Abc/oidc/conf/:/opt/keycloak/conf/
+      - /home/duser/Abc/oidc/import/:/opt/keycloak/data/import/
+      - /home/duser/Abc/oidc/providers/:/opt/keycloak/providers/
+      - /home/duser/Abc/postgres/modify_postgres.sh:/opt/modify_postgres.sh
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_HOSTNAME_ADMIN_URL: https://${LOCAL_IP}:8443
+      KC_HOSTNAME_URL: https://${LOCAL_IP}:8443
+    networks:
+      - net
+      
+  postgres_db:
+    container_name: postgres
+    image: postgres
+    ports:
+      - "5432:5432"
+    restart: always
+    volumes:
+      - /home/duser/Abc/postgres/setup_postgres.sh:/tmp/setup_postgres.sh
+      - /home/duser/Abc/postgres/modify_postgres.sh:/opt/modify_postgres.sh
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: keycloak
+    networks:
+      - net
+      
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:3.12
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - /home/duser/Abc/rabbitmq/signing-key.pem:/etc/rabbitmq/signing-key.pem
+      - /home/duser/Abc/rabbitmq/enabled_plugins:/etc/rabbitmq/enabled_plugins
+      - /home/duser/Abc/rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
+      - /home/duser/Abc/rabbitmq/rabbitmq.crt:/etc/rabbitmq/rabbitmq.crt
+      - /home/duser/Abc/rabbitmq/rabbitmq.key:/etc/rabbitmq/rabbitmq.key
+    networks:
+      - net
+      
+  ldap_mock:
+    container_name: ldap
+    image: osixia/openldap
+    environment:
+      LDAP_DOMAIN: example.org
+      LDAP_ADMIN_PASSWORD: admin
+    ports:
+      - "3890:389"
+    networks:
+      - net
+      
+  ldapgui:
+    image: osixia/phpldapadmin:0.9.0
+    container_name: ldapgui
+    ports:
+      - "6443:443"
+    environment:
+      - PHPLDAPADMIN_LDAP_HOSTS=ldap://${LOCAL_IP}:3890
+    networks:
+      - net
+      
+networks:
+  net:

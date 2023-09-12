@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+docker cp mock_users_update.ldif ldap:/tmp/mock_users.ldif
+docker exec ldap ldapmodify -h localhost -D "cn=admin,dc=example,dc=org" -w admin -f /tmp/mock_users.ldif

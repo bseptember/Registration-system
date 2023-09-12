@@ -1,0 +1,12 @@
+dn: uid=f37f3951-97c1-468f-9638-6352ae74b646,dc=example,dc=org
+changetype: modify
+add: userPassword
+userPassword: 1234
+-
+replace: givenName
+givenName: Devaan
+
+dn: uid=abcd68bb-a3c3-4f7d-aefe-a70b84e09e1f,dc=example,dc=org
+changetype: modify
+replace: givenName
+givenName: Tashi
