@@ -1,6 +1,6 @@
 # Keycloak, LDAP, and local user registrations, and rabbitmq
 
-
+TODO: add verify and share tabs in account console
 
 ## Quick start
 

@@ -28,7 +28,7 @@
   "enabled": true,
   "sslRequired": "external",
   "registrationAllowed": true,
-  "registrationEmailAsUsername": false,
+  "registrationEmailAsUsername": true,
   "rememberMe": false,
   "verifyEmail": false,
   "loginWithEmailAllowed": true,
@@ -688,13 +688,13 @@
       "clientId": "account",
       "name": "${client_account}",
       "rootUrl": "${authBaseUrl}",
-      "baseUrl": "/realms/test/account/",
+      "baseUrl": "/realms/FindME/account/",
       "surrogateAuthRequired": false,
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
       "redirectUris": [
-        "/realms/test/account/*"
+        "/realms/FindME/account/*"
       ],
       "webOrigins": [],
       "notBefore": 0,
@@ -732,13 +732,13 @@
       "clientId": "account-console",
       "name": "${client_account-console}",
       "rootUrl": "${authBaseUrl}",
-      "baseUrl": "/realms/test/account/",
+      "baseUrl": "/realms/FindME/account/",
       "surrogateAuthRequired": false,
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
       "redirectUris": [
-        "/realms/test/account/*"
+        "/realms/FindME/account/*"
       ],
       "webOrigins": [],
       "notBefore": 0,
@@ -992,7 +992,7 @@
       "clientId": "producer",
       "name": "FindME",
       "description": "",
-      "rootUrl": "",
+      "rootUrl": "${authBaseUrl}",
       "adminUrl": "",
       "baseUrl": "",
       "surrogateAuthRequired": false,
@@ -1000,7 +1000,7 @@
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
       "secret": "kbOFBXI9tANgKUq8vXHLhT6YhbivgXxn",
-      "redirectUris": [],
+      "redirectUris": ["http://192.168.8.187:5120/*"],
       "webOrigins": [],
       "notBefore": 0,
       "bearerOnly": false,
@@ -1017,7 +1017,7 @@
         "saml.force.post.binding": "false",
         "saml.multivalued.roles": "false",
         "frontchannel.logout.session.required": "false",
-        "post.logout.redirect.uris": "myapp://callback##http://192.168.8.158:5053/api/_keycloak/callback",
+        "post.logout.redirect.uris": "",
         "oauth2.device.authorization.grant.enabled": "false",
         "backchannel.logout.revoke.offline.tokens": "false",
         "saml.server.signature.keyinfo.ext": "false",
@@ -1208,7 +1208,7 @@
       "clientId": "rabbitmq-client-code",
       "name": "",
       "description": "",
-      "rootUrl": "http://192.168.1.42:15672/",
+      "rootUrl": "http://192.168.8.187:15672/",
       "adminUrl": "",
       "baseUrl": "",
       "surrogateAuthRequired": false,
@@ -1216,7 +1216,7 @@
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
       "redirectUris": [
-        "http://192.168.1.42:15672/*"
+        "http://192.168.8.187:15672/*"
       ],
       "webOrigins": [
         "+"
@@ -1491,13 +1491,13 @@
       "clientId": "security-admin-console",
       "name": "${client_security-admin-console}",
       "rootUrl": "${authAdminUrl}",
-      "baseUrl": "/admin/test/console/",
+      "baseUrl": "/admin/FindME/console/",
       "surrogateAuthRequired": false,
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
       "redirectUris": [
-        "/admin/test/console/*"
+        "/admin/FindME/console/*"
       ],
       "webOrigins": [
         "+"

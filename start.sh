@@ -69,6 +69,13 @@ else
     LOCAL_IP=$(grep -oE 'LOCAL_IP=[0-9\.]*' .env | cut -d'=' -f2)
 fi
 
+# Replace all IP addresses for the webapi and rabbitmq in the JSON file
+sed -i "s/http:\/\/[0-9.]*:5120\//http:\/\/$LOCAL_IP:5120\//g" oidc/import/test-realm.json
+sed -i "s/http:\/\/[0-9.]*:15672\//http:\/\/$LOCAL_IP:15672\//g" oidc/import/test-realm.json
+sed -i "s/http:\/\/[0-9.]*:15672\//http:\/\/$LOCAL_IP:15672\//g" oidc/import/test-realm.json
+sed -i "s/http:\/\/[0-9.]*:8080/http:\/\/$LOCAL_IP:8080/g" rabbitmq/rabbitmq.conf
+sed -i "s/https:\/\/[0-9.]*:8443/https:\/\/$LOCAL_IP:8443/g" rabbitmq/rabbitmq.conf
+
 # Generate IdP and LDAP certs
 generate_certs
 docker-compose up -d
