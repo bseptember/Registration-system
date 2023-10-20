@@ -89,7 +89,7 @@
       },
       {
         "id": "dd893988-6661-4849-a0f1-1cd1a63b51a5",
-        "name": "rabbitmq.read:*/*",
+        "name": "rabbitmq.read:*/*/*",
         "composite": false,
         "clientRole": false,
         "containerId": "test",
@@ -106,7 +106,7 @@
       },
       {
         "id": "77e9131f-1eb3-45a3-9f3b-f74991a99def",
-        "name": "rabbitmq.configure:*/*",
+        "name": "rabbitmq.configure:*/*/*",
         "composite": false,
         "clientRole": false,
         "containerId": "test",
@@ -161,7 +161,7 @@
       },
       {
         "id": "216cfa85-9b8a-4fc0-bee1-814e2978d82b",
-        "name": "rabbitmq.write:*/*",
+        "name": "rabbitmq.write:*/*/*",
         "composite": false,
         "clientRole": false,
         "containerId": "test",
@@ -635,7 +635,7 @@
       ]
     },
     {
-      "clientScope": "rabbitmq.read:*/*",
+      "clientScope": "rabbitmq.read:*/*/*",
       "roles": [
         "producer"
       ]
@@ -647,7 +647,7 @@
       ]
     },
     {
-      "clientScope": "rabbitmq.configure:*/*",
+      "clientScope": "rabbitmq.configure:*/*/*",
       "roles": [
         "producer"
       ]
@@ -659,7 +659,7 @@
       ]
     },
     {
-      "clientScope": "rabbitmq.write:*/*",
+      "clientScope": "rabbitmq.write:*/*/*",
       "roles": [
         "producer"
       ]
@@ -1141,14 +1141,14 @@
         }
       ],
       "defaultClientScopes": [
-        "rabbitmq.read:*/*",
+        "rabbitmq.read:*/*/*",
         "web-origins",
         "acr",
-        "rabbitmq.write:*/*",
+        "rabbitmq.write:*/*/*",
         "roles",
         "rabbitConnect",
         "email",
-        "rabbitmq.configure:*/*"
+        "rabbitmq.configure:*/*/*"
       ],
       "optionalClientScopes": [
         "address",
@@ -1774,7 +1774,7 @@
     },
     {
       "id": "b2ced9e2-289f-44b0-8567-5218a2eee3e6",
-      "name": "rabbitmq.read:*/*",
+      "name": "rabbitmq.read:*/*/*",
       "description": "read all",
       "protocol": "openid-connect",
       "attributes": {
@@ -1911,7 +1911,7 @@
     },
     {
       "id": "4dfc0d4d-654d-4e1c-8b58-64a0e1126a19",
-      "name": "rabbitmq.configure:*/*",
+      "name": "rabbitmq.configure:*/*/*",
       "protocol": "openid-connect",
       "attributes": {
         "include.in.token.scope": "true",
@@ -2127,7 +2127,7 @@
     },
     {
       "id": "2010b133-4bfe-4f5f-8d1a-33b2a7ad2e60",
-      "name": "rabbitmq.write:*/*",
+      "name": "rabbitmq.write:*/*/*",
       "protocol": "openid-connect",
       "attributes": {
         "include.in.token.scope": "true",
