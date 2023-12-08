@@ -1,37 +1,32 @@
 version: '3'
 services:
-# use start-dev for testing and start for production.
-# Remember to change the rabbitmq.conf file as well to http://ipaddr:8080
+# use "start-dev" for testing and "start" for production. Change 8443 to 8080 and https to http
+# Remember to change the rabbitmq.conf file as well to http://ipaddr:8080 when using "start-dev"
   oidc_kc:
     container_name: oidc
     image: quay.io/keycloak/keycloak:20.0
     entrypoint: /opt/modify_postgres.sh
     command: >
-      -v start-dev
+      -v start
       --import-realm
-    ports:
-      - "8080:8080"
-      - "8443:8443"
     volumes:
-      - /home/duser/Abc/oidc/conf/:/opt/keycloak/conf/
-      - /home/duser/Abc/oidc/import/:/opt/keycloak/data/import/
-      - /home/duser/Abc/oidc/providers/:/opt/keycloak/providers/
-      - /home/duser/Abc/oidc/themes/:/opt/keycloak/themes/
-      - /home/duser/Abc/postgres/modify_postgres.sh:/opt/modify_postgres.sh
+      - ./certs/:/opt/keycloak/conf/
+      - ./oidc/import/:/opt/keycloak/data/import/
+      - ./oidc/providers/:/opt/keycloak/providers/
+      - ./oidc/themes/:/opt/keycloak/themes/
+      - ./postgres/modify_postgres.sh:/opt/modify_postgres.sh
     environment:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
       KC_HOSTNAME_ADMIN_URL: https://${LOCAL_IP}:8443
       KC_HOSTNAME_URL: https://${LOCAL_IP}:8443
-      #KC_HOSTNAME: fqdn
-      KC_HTTPS_CERTIFICATE_FILE: /opt/keycloak/conf/keycloak.crt
-      KC_HTTPS_CERTIFICATE_KEY_FILE: /opt/keycloak/conf/keycloak.key
+      KC_HTTPS_CERTIFICATE_FILE: /opt/keycloak/conf/oidc.crt
+      KC_HTTPS_CERTIFICATE_KEY_FILE: /opt/keycloak/conf/oidc.key
       KC_DB_USERNAME: postgres
       KC_DB_PASSWORD: postgres
       KC_DB: postgres
-      KC_DB_URL_HOST: ${LOCAL_IP}       
-    networks:
-      - net
+      KC_DB_URL_HOST: ${LOCAL_IP}
+    network_mode: host  
       
   postgres_db:
     container_name: postgres
@@ -40,8 +35,8 @@ services:
       - "5432:5432"
     restart: always
     volumes:
-      - /home/duser/Abc/postgres/setup_postgres.sh:/tmp/setup_postgres.sh
-      - /home/duser/Abc/postgres/modify_postgres.sh:/opt/modify_postgres.sh
+      - ./postgres/setup_postgres.sh:/tmp/setup_postgres.sh
+      - ./postgres/modify_postgres.sh:/opt/modify_postgres.sh
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
@@ -63,17 +58,14 @@ services:
   rabbitmq:
     container_name: rabbitmq
     image: rabbitmq:3.12
-    ports:
-      - "5672:5672"
-      - "15672:15672"
     volumes:
-      - /home/duser/Abc/rabbitmq/signing-key.pem:/etc/rabbitmq/signing-key.pem
-      - /home/duser/Abc/rabbitmq/enabled_plugins:/etc/rabbitmq/enabled_plugins
-      - /home/duser/Abc/rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
-      - /home/duser/Abc/rabbitmq/rabbitmq.crt:/etc/rabbitmq/rabbitmq.crt
-      - /home/duser/Abc/rabbitmq/rabbitmq.key:/etc/rabbitmq/rabbitmq.key
-    networks:
-      - net
+      - ./rabbitmq/signing-key.pem:/etc/rabbitmq/signing-key.pem
+      - ./rabbitmq/enabled_plugins:/etc/rabbitmq/enabled_plugins
+      - ./rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
+      - ./certs/root_ca.crt:/etc/rabbitmq/root_ca.crt:ro
+      - ./certs/rabbitmq.crt:/etc/rabbitmq/rabbitmq.crt:ro
+      - ./certs/rabbitmq.key:/etc/rabbitmq/rabbitmq.key:ro
+    network_mode: host  
       
   ldap_mock:
     container_name: ldap

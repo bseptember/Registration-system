@@ -1,50 +1,26 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Function to generate root CA cert and key
+# Start step ca container and generate self signed CA and intemediate cert
 generate_root_ca() {
-    openssl ecparam -name prime256v1 -genkey -out rootCA.key
-    openssl req -x509 -new -key rootCA.key -subj '/C=ZA/ST=Gauteng/O=Findme/CN=Findme RootCA' -sha256 -days 1024 -out rootCA.crt
+    cd stepca
+    docker rm -f stepca
+    docker build --no-cache -t stepca:latest -f Dockerfile .
+    docker run -d \
+    --name stepca \
+    --network host \
+    --privileged \
+    --volume ./modify/oidc.sh:/home/oidc.sh \
+    stepca:latest
+    
+    cd ../
+ 	
+    # wait till the files exist before copying over to volume
+    sleep 10
+
+    docker cp stepca:/root/.step/certs/. certs
+    docker cp stepca:/root/.step/secrets/. certs
 }
-
-# Function to generate IdP and LDAP certs
-generate_certs() {
-    # Generate IdP cert
-    openssl ecparam -name prime256v1 -genkey -out oidc/conf/keycloak.key
-    openssl req -new -key oidc/conf/keycloak.key -subj "/C=ZA/ST=Gauteng/O=Keycloak/CN=${LOCAL_IP}" -sha256 -out oidc/conf/keycloak.csr
-    openssl x509 -req -in oidc/conf/keycloak.csr -CA rootCA.crt -CAkey rootCA.key -CAcreateserial -out oidc/conf/keycloak.crt -days 500 -sha256
-    rm oidc/conf/keycloak.csr
-    cat oidc/conf/keycloak.crt rootCA.crt > oidc/conf/fullchain.crt
-
-    # Generate LDAP cert
-    openssl ecparam -name prime256v1 -genkey -out ldap_mock/ldap.key
-    openssl req -new -key ldap_mock/ldap.key -subj "/C=ZA/ST=Gauteng/O=Ldap/CN=${LOCAL_IP}" -sha256 -out ldap_mock/ldap.csr
-    openssl x509 -req -in ldap_mock/ldap.csr -CA rootCA.crt -CAkey rootCA.key -CAcreateserial -out ldap_mock/ldap.crt -days 500 -sha256
-    rm ldap_mock/ldap.csr
-    cat ldap_mock/ldap.crt rootCA.crt > ldap_mock/fullchain.crt
-
-    # Generate RabbitMQ cert
-    openssl ecparam -name prime256v1 -genkey -out rabbitmq/rabbitmq.key
-    openssl req -new -key rabbitmq/rabbitmq.key -subj "/C=ZA/ST=Gauteng/O=RabbitMQ/CN=${LOCAL_IP}" -sha256 -out rabbitmq/rabbitmq.csr
-    openssl x509 -req -in rabbitmq/rabbitmq.csr -CA rootCA.crt -CAkey rootCA.key -CAcreateserial -out rabbitmq/rabbitmq.crt -days 500 -sha256
-    rm rabbitmq/rabbitmq.csr
-    cat rabbitmq/rabbitmq.crt rootCA.crt > rabbitmq/fullchain.crt
-}
-
-
-
-# Check if the files exist and prompt the user
-if [[ -f rootCA.key && -f rootCA.crt ]]; then
-    read -rp "The rootCA.key and rootCA.crt files already exist. Do you want to overwrite them? (y/n): " response
-    if [[ "$response" =~ ^[Yy]$ ]]; then
-        rm -f rootCA.key rootCA.crt
-        generate_root_ca
-    else
-        echo "Files not overwritten. Continuing."
-    fi
-else
-    generate_root_ca
-fi
 
 # Find the local IP address for the 'enp0s3' interface
 LOCAL_IP=$(ifconfig enp0s3 | grep -oE 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -oE '([0-9]*\.){3}[0-9]*')
@@ -71,11 +47,69 @@ fi
 
 # Replace all IP addresses for the webapi and rabbitmq in the JSON file
 sed -i "s/http:\/\/[0-9.]*:5120\//http:\/\/$LOCAL_IP:5120\//g" oidc/import/test-realm.json
+sed -i "s/https:\/\/[0-9.]*:15671\//https:\/\/$LOCAL_IP:15671\//g" oidc/import/test-realm.json
 sed -i "s/http:\/\/[0-9.]*:15672\//http:\/\/$LOCAL_IP:15672\//g" oidc/import/test-realm.json
-sed -i "s/http:\/\/[0-9.]*:15672\//http:\/\/$LOCAL_IP:15672\//g" oidc/import/test-realm.json
+sed -i '/"rabbit_url": \[/{N;s/"[0-9.]\+"/"'$LOCAL_IP'"/}' oidc/import/test-realm.json
 sed -i "s/http:\/\/[0-9.]*:8080/http:\/\/$LOCAL_IP:8080/g" rabbitmq/rabbitmq.conf
 sed -i "s/https:\/\/[0-9.]*:8443/https:\/\/$LOCAL_IP:8443/g" rabbitmq/rabbitmq.conf
+sed -E -i "s/([0-9]{1,3}\.){3}[0-9]{1,3}/$LOCAL_IP/g" stepca/ca.json
 
-# Generate IdP and LDAP certs
-generate_certs
+# Function to generate leaf certs
+generate_certs() {
+    if [[ -n "$LOCAL_IP" ]]; then
+                
+        docker exec -it stepca sh -c "mkdir -p /root/.step/data"
+        
+        # Generate keycloak cert
+        docker exec -it stepca sh -c "cd data && step ca certificate --force --issuer admin --password-file /root/.step/secrets/password $LOCAL_IP oidc.crt oidc.key"
+    
+        # Generate LDAP cert
+        docker exec -it stepca sh -c "cd data && step ca certificate --force --issuer admin --password-file /root/.step/secrets/password $LOCAL_IP ldap.crt ldap.key"
+    
+        # Generate RabbitMQ cert
+        docker exec -it stepca sh -c "cd data && step ca certificate --force --issuer admin -password-file /root/.step/secrets/password $LOCAL_IP rabbitmq.crt rabbitmq.key"
+        
+        # Generate custom cert for your pc
+        docker exec -it stepca sh -c "cd data && step ca certificate --force --issuer admin --password-file /root/.step/secrets/password 10.20.1.85 custom.crt custom.key"
+        
+        # Generate p12 for custom cert
+        #docker exec -it stepca sh -c "cd data && step certificate p12 --no-password --insecure custom.p12 custom.crt custom.key"
+	openssl pkcs12 -export -out certs/custom.p12 -inkey certs/custom.key -in certs/custom.crt -passout pass:1234567890 -certpbe aes-256-cbc -keypbe aes-256-cbc
+        
+        # Copy all certs to host drive
+        docker cp stepca:/root/.step/data/. certs
+
+	# Ensure files are usable on services in docker containers
+	chmod -R 777 certs/*	
+    
+    else
+        echo "Error: LOCAL_IP is empty or not defined."
+    fi
+}
+
+# Check if the files exist and prompt the user
+if docker exec stepca [ -f "/root/.step/certs/root_ca.crt" ] && docker exec stepca [ -f "/root/.step/secrets/root_ca_key" ]; then
+    read -rp "The root_ca.crt and root_ca_key files already exist. Do you want to overwrite them? (y/n): " response
+    if [[ "$response" =~ ^[Yy]$ ]]; then
+        docker rm -f stepca
+        generate_root_ca
+    else
+        echo "Root CA not overwritten. Continuing."
+    fi
+else
+    generate_root_ca
+fi
+
+if docker exec stepca [ -d "/root/.step/data" ]; then
+    read -rp "Certs already exist. Do you want to overwrite them? (y/n): " response
+    if [[ "$response" =~ ^[Yy]$ ]]; then
+        generate_certs
+    else
+        echo "Certs not overwritten. Continuing."
+    fi
+else
+    generate_certs
+fi
+
 docker-compose up -d
+docker logs -f stepca

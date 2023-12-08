@@ -521,7 +521,14 @@
       "id": "6746dbec-7e2b-4540-ae00-73aa2a93a04e",
       "name": "rabbitmq",
       "path": "/rabbitmq",
-      "attributes": {},
+      "attributes": {
+        "rabbit_url": [
+          "192.168.8.187"
+        ],
+        "virtual_host": [
+          "/"
+        ]
+      },
       "realmRoles": [
         "rabbitmq"
       ],
@@ -1000,7 +1007,7 @@
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
       "secret": "kbOFBXI9tANgKUq8vXHLhT6YhbivgXxn",
-      "redirectUris": ["http://192.168.8.187:5120/*"],
+      "redirectUris": ["http://192.168.8.187:5120/*","myapp://callback","http://localhost:7000/*"],
       "webOrigins": [],
       "notBefore": 0,
       "bearerOnly": false,
@@ -1208,7 +1215,7 @@
       "clientId": "rabbitmq-client-code",
       "name": "",
       "description": "",
-      "rootUrl": "http://192.168.8.187:15672/",
+      "rootUrl": "https://192.168.8.187:15671/",
       "adminUrl": "",
       "baseUrl": "",
       "surrogateAuthRequired": false,
@@ -1216,7 +1223,7 @@
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
       "redirectUris": [
-        "http://192.168.8.187:15672/*"
+        "https://192.168.8.187:15671/*"
       ],
       "webOrigins": [
         "+"

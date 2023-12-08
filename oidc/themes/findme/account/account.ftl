@@ -90,6 +90,7 @@
                 <input type="text" class="form-control" id="user.attributes.postal_code" name="user.attributes.postal_code" value="${(account.attributes.postal_code!'')}"/>
             </div>
         </div>
+        
         <div class="form-group">
             <div class="col-sm-2 col-md-2">
                 <label for="user.attributes.country" class="control-label">${msg("country")}</label>
@@ -99,7 +100,34 @@
                 <input type="text" class="form-control" id="user.attributes.country" name="user.attributes.country" value="${(account.attributes.country!'')}"/>
             </div>
         </div>
+        
+<div class="form-group">
+    <div class="col-sm-2 col-md-2">
+        <label for="user.attributes.phone_number" class="control-label">${msg("Phone number")}</label>
+    </div>
+    <div class="col-sm-10 col-md-10">
+        <input type="text" class="form-control" id="user.attributes.phone_number" name="user.attributes.phone_number"/>
+        <button type="button" id="hashButton">Hash</button>
+    </div>
+</div>
 
+<!-- Include CryptoJS from a CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const phoneField = document.getElementById("user.attributes.phone_number");
+        const hashButton = document.getElementById("hashButton");
+
+        hashButton.addEventListener("click", function () {
+            const phoneNumber = phoneField.value;
+            const hashedPhoneNumber = CryptoJS.SHA256(phoneNumber).toString();
+            phoneField.value = hashedPhoneNumber;
+        });
+    });
+</script>
+
+        
         <div class="form-group">
             <div id="kc-form-buttons" class="col-md-offset-2 col-md-10 submit">
                 <div class="">

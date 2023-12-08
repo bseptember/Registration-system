@@ -1,6 +1,6 @@
 # Keycloak, LDAP, and local user registrations, and rabbitmq
 
-TODO: add verify and share tabs in account console
+
 
 ## Quick start
 
@@ -58,6 +58,12 @@ rabbitmq
 
 TODO: edit rabbitmq.conf to include certificates
 
+
+## Step ca
+
+use the following command to edit the --listen ip address
+
+docker exec -it stepca sh -c '/home/oidc.sh'
 
 ## Allowing user registration
 
