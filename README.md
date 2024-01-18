@@ -75,22 +75,22 @@ Under "User Federation", add an LDAP provider.
 
 We're going to set the following parameters:
 
-* enabled: ON
-* console display name: _whatever you like, 'ldap' is fine_
-* import users: OFF
-* edit mode: READ_ONLY
-* sync registrations: OFF
-* vendor: Other
-* username LDAP attribute: mail
-* RDN LDAP attribute: uid
-* UUID LDAP attribute: uid
-* User Object Classes: inetOrgPerson
-* Connection URL: ldap://ldap:3890
-* Users DN: `dc=example,dc=org`
-* Custom User LDAP Filter: _leave blank_
-* Search Scope: One Level
-* Bind Type: simple
-* Bind DN: `cn=admin,dc=example,dc=org`
-* Bind Credential: `admin`
+*	enabled: ON
+*	console display name: _whatever you like, 'ldap' is fine_
+*	vendor: Other
+*	Connection URL: ldap://{IP_ADDR}:3890
+*	Bind Type: simple
+*	Bind DN: `cn=admin,dc=example,dc=org`
+*	Bind Credential: `admin`
+*	edit mode: READ_ONLY
+*	Users DN: `dc=example,dc=org`
+*	username LDAP attribute: mail
+*	RDN LDAP attribute: uid
+*	UUID LDAP attribute: uid
+*	User Object Classes: inetOrgPerson
+*	User LDAP Filter: _leave blank_
+*	Search Scope: One Level
+*	import users: OFF
+*	sync registrations: OFF
 
 That should be enough; hit "save" and then "Test Connection".  Then hit "Synchronize all users".

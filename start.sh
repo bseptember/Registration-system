@@ -76,14 +76,14 @@ generate_certs() {
         
         # Generate custom cert for your pc
         docker exec -it stepca sh -c "cd data && step ca certificate --force --issuer admin --password-file /root/.step/secrets/password $REMOTE_CLIENT_IP custom.crt custom.key"
-        
+
+        # Copy all certs to host drive
+        docker cp stepca:/root/.step/data/. certs
+
         # Generate p12 for custom cert
         #docker exec -it stepca sh -c "cd data && step certificate p12 --no-password --insecure custom.p12 custom.crt custom.key"
 	openssl pkcs12 -export -out certs/custom.p12 -inkey certs/custom.key -in certs/custom.crt -passout pass:1234567890 -certpbe aes-256-cbc -keypbe aes-256-cbc
         
-        # Copy all certs to host drive
-        docker cp stepca:/root/.step/data/. certs
-
 	# Ensure files are usable on services in docker containers
 	chmod -R 777 certs/*	
     
