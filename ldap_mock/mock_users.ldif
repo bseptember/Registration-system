@@ -16,8 +16,8 @@ userPassword: ApgOdU
 objectClass: inetOrgPerson
 mail: dkoeppkev@businessinsider.com
 
-dn:uid=f37f3951-97c1-468f-9638-6352ae74b646,dc=example,dc=org
-uid:f37f3951-97c1-468f-9638-6352ae74b646
+dn:uid=f17f3951-97c1-468f-9638-6352ae74b646,dc=example,dc=org
+uid:f17f3951-97c1-468f-9638-6352ae74b646
 givenName:Jefferson
 sn:Pesos
 cn:Jeff

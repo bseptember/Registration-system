@@ -73,6 +73,15 @@ services:
     environment:
       LDAP_DOMAIN: example.org
       LDAP_ADMIN_PASSWORD: admin
+      LDAP_TLS_KEY_FILENAME: ldap.key
+      LDAP_TLS_CRT_FILENAME: ldap.crt
+      LDAP_TLS_CA_CRT_FILENAME: root_ca.crt
+    volumes:
+      - ./certs/phpldap.key:/container/service/slapd/assets/certs/ldap.key:rw
+      - ./certs/phpldap.crt:/container/service/slapd/assets/certs/ldap.crt:rw
+      - ./certs/root_ca.crt:/container/service/slapd/assets/certs/root_ca.crt:rw
+      - ./ldap_mock/mock_users.ldif:/tmp/mock_users.ldif
+      - ./ldap_mock/mock_users_update.ldif:/tmp/mock_users_update.ldif
     ports:
       - "3890:389"
     networks:
@@ -81,12 +90,22 @@ services:
   ldapgui:
     image: osixia/phpldapadmin:0.9.0
     container_name: ldapgui
+    command: >
+      -ldapmodify -h localhost -D "cn=admin,dc=example,dc=org" -w admin -a -f /tmp/mock_users.ldif
     ports:
       - "6443:443"
     environment:
-      - PHPLDAPADMIN_LDAP_HOSTS=ldap://${LOCAL_IP}:3890
+      PHPLDAPADMIN_LDAP_HOSTS: ldap://${LOCAL_IP}:3890
+      PHPLDAPADMIN_HTTPS_KEY_FILENAME: phpldap.key
+      PHPLDAPADMIN_HTTPS_CRT_FILENAME: phpldap.crt
+      PHPLDAPADMIN_HTTPS_CA_CRT_FILENAME: root_ca.crt
+    volumes:
+      - ./certs/phpldap.key:/container/service/phpldapadmin/assets/apache2/certs/phpldap.key:rw
+      - ./certs/phpldap.crt:/container/service/phpldapadmin/assets/apache2/certs/phpldap.crt:rw
+      - ./certs/root_ca.crt:/container/service/phpldapadmin/assets/apache2/certs/root_ca.crt:rw
     networks:
       - net
       
 networks:
   net:
+    

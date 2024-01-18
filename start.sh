@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
+REMOTE_CLIENT_IP=192.168.8.181
 
 # Start step ca container and generate self signed CA and intemediate cert
 generate_root_ca() {
@@ -49,6 +50,7 @@ fi
 sed -i "s/http:\/\/[0-9.]*:5120\//http:\/\/$LOCAL_IP:5120\//g" oidc/import/test-realm.json
 sed -i "s/https:\/\/[0-9.]*:15671\//https:\/\/$LOCAL_IP:15671\//g" oidc/import/test-realm.json
 sed -i "s/http:\/\/[0-9.]*:15672\//http:\/\/$LOCAL_IP:15672\//g" oidc/import/test-realm.json
+sed -i 's|ldap://[0-9.]*:3890|ldap://'"$LOCAL_IP"':3890|g' oidc/import/test-realm.json
 sed -i '/"rabbit_url": \[/{N;s/"[0-9.]\+"/"'$LOCAL_IP'"/}' oidc/import/test-realm.json
 sed -i "s/http:\/\/[0-9.]*:8080/http:\/\/$LOCAL_IP:8080/g" rabbitmq/rabbitmq.conf
 sed -i "s/https:\/\/[0-9.]*:8443/https:\/\/$LOCAL_IP:8443/g" rabbitmq/rabbitmq.conf
@@ -66,11 +68,14 @@ generate_certs() {
         # Generate LDAP cert
         docker exec -it stepca sh -c "cd data && step ca certificate --force --issuer admin --password-file /root/.step/secrets/password $LOCAL_IP ldap.crt ldap.key"
     
+        # Generate PhpLDAP cert
+        docker exec -it stepca sh -c "cd data && step ca certificate --force --issuer admin --password-file /root/.step/secrets/password $LOCAL_IP phpldap.crt phpldap.key"
+    
         # Generate RabbitMQ cert
         docker exec -it stepca sh -c "cd data && step ca certificate --force --issuer admin -password-file /root/.step/secrets/password $LOCAL_IP rabbitmq.crt rabbitmq.key"
         
         # Generate custom cert for your pc
-        docker exec -it stepca sh -c "cd data && step ca certificate --force --issuer admin --password-file /root/.step/secrets/password 10.20.1.85 custom.crt custom.key"
+        docker exec -it stepca sh -c "cd data && step ca certificate --force --issuer admin --password-file /root/.step/secrets/password $REMOTE_CLIENT_IP custom.crt custom.key"
         
         # Generate p12 for custom cert
         #docker exec -it stepca sh -c "cd data && step certificate p12 --no-password --insecure custom.p12 custom.crt custom.key"
