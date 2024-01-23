@@ -37,21 +37,30 @@
 					"y": "Xp5B3IM7obK2JMlrV07phoZAS-Hy6ceW-IBQ06mDTgE"
 				},
 				"claims": {
-                                        "minTLSCertDuration": "72h",
-                                        "maxTLSCertDuration": "8760h",
-                                        "defaultTLSCertDuration": "8760h"
-                                        },
+					"minTLSCertDuration": "2h0m0s",
+					"maxTLSCertDuration": "8670h0m0s",
+					"defaultTLSCertDuration": "8670h0m0s",
+					"enableSSHCA": true,
+					"disableRenewal": false,
+					"allowRenewalAfterExpiry": false
+                },
 				"encryptedKey": "eyJhbGciOiJQQkVTMi1IUzI1NitBMTI4S1ciLCJjdHkiOiJqd2sranNvbiIsImVuYyI6IkEyNTZHQ00iLCJwMmMiOjEwMDAwMCwicDJzIjoiaFZ3U1FmRGFVWXR2a2lsSWgydTVrQSJ9.GODmlH-g3tQu2TiYBYidOCLrq5IsI6p_Z1-WH-Evzo1GTATmIH-88A.v4cDaG8Q4OL69QRN.3T819CxM2BcssmBd3vdiaa-Mv3c_Sk_Sb9D5JHJsnnxMzRpQN5oruWRTu-ur8A7giBzKzaPIlcvz01u60YDzJsvirQRdRKiRpS5sZCWAhFp2P0Uh7b-5kZvPzlbvsHP-AButZxLVLScS6I6Udwd-yGhIX-5An4AcU6PD_mvRRea7bl9vmb6mVpnK1luSAcdkzM3ghqGcSMGukjP5xsTv_b5OBn6gS-_w9tZ5gObnPf_3xtdu8PtP65DXid4Fq0-nywNqH4usqgEeYe1NDeZZJLmFOBMsiqzB-miI3Sbv3jLMq7dLeSA-pdFQ_05vsPOFM07t0L6GOs2aQKKoDnE.F3AYI1_LMZher-zc7uFhaw"
 			}
 		]
 	},
 	"tls": {
 		"cipherSuites": [
-			"TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256",
-			"TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256"
+			"TLS_AES_256_GCM_SHA384",
+            "TLS_CHACHA20_POLY1305_SHA256",
+            "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256",
+            "TLS_AES_128_GCM_SHA256",
+            "ECDHE-ECDSA-AES256-GCM-SHA384",
+            "ECDHE-ECDSA-CHACHA20-POLY1305",
+            "ECDHE-ECDSA-AES128-GCM-SHA256"
+
 		],
 		"minVersion": 1.2,
 		"maxVersion": 1.3,
-		"renegotiation": false
+		"renegotiation": true
 	}
 }
