@@ -82,10 +82,13 @@ generate_certs() {
 
         # Generate p12 for custom cert
         #docker exec -it stepca sh -c "cd data && step certificate p12 --no-password --insecure custom.p12 custom.crt custom.key"
-	openssl pkcs12 -export -out certs/custom.p12 -inkey certs/custom.key -in certs/custom.crt -passout pass:1234567890 -certpbe aes-256-cbc -keypbe aes-256-cbc
+	    openssl pkcs12 -export -out certs/custom.p12 -inkey certs/custom.key -in certs/custom.crt -passout pass:1234567890 -certpbe aes-256-cbc -keypbe aes-256-cbc
         
-	# Ensure files are usable on services in docker containers
-	chmod -R 777 certs/*	
+        # Create a full chain intermediate certificate
+        cat certs/root_ca.crt >> certs/intermediate_ca.crt
+
+	    # Ensure files are usable on services in docker containers
+	    chmod -R 777 certs/*	
     
     else
         echo "Error: LOCAL_IP is empty or not defined."

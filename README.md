@@ -1,6 +1,6 @@
-# Keycloak, LDAP, and local user registrations, and rabbitmq
+# Backend registration server system for clients
 
-
+Keycloak, LDAP, and local user registrations, and rabbitmq
 
 ## Quick start
 
@@ -56,7 +56,13 @@ Use this to update the mock users. Alternatively, go to https://localhost:6443
 rabbitmq
 ```
 
-TODO: edit rabbitmq.conf to include certificates
+https://localhost:15671
+
+http://localhost:15672
+
+For a rabbit_admin account:
+
+Go to the following url, click log on. Register a new account. Login to Keycloak, then navigate to the Realm and Users. Select the user you just created and go to the Role Mapping tab. Assign roles, rabbitmq. read, write and configure as well as tag:management.
 
 
 ## Step ca
@@ -94,3 +100,22 @@ We're going to set the following parameters:
 *	sync registrations: OFF
 
 That should be enough; hit "save" and then "Test Connection".  Then hit "Synchronize all users".
+
+
+## Useful TLS commands for openssl
+
+Initiate a server connection using the certificates provided in the certs. After running the quick start command, stop or remove all containers before attempting this or use a different port.
+
+For the server:
+
+```
+openssl s_server -accept 8443 -cert rabbitmq.crt -key rabbitmq.key -CAfile intermediate_ca.crt
+```
+
+For the client:
+
+```
+openssl s_client -connect localhost:8443 -cert custom.crt -key custom.key -CAfile intermediate_ca.crt -verify 8
+```
+
+The output will give you information regarding the certificate validity. Anything other than Verify return code: 0 (ok) will indicate a faulty certificate.

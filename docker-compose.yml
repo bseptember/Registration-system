@@ -62,7 +62,7 @@ services:
       - ./rabbitmq/signing-key.pem:/etc/rabbitmq/signing-key.pem
       - ./rabbitmq/enabled_plugins:/etc/rabbitmq/enabled_plugins
       - ./rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
-      - ./certs/root_ca.crt:/etc/rabbitmq/root_ca.crt:ro
+      - ./certs/intermediate_ca.crt:/etc/rabbitmq/intermediate_ca.crt:ro
       - ./certs/rabbitmq.crt:/etc/rabbitmq/rabbitmq.crt:ro
       - ./certs/rabbitmq.key:/etc/rabbitmq/rabbitmq.key:ro
     network_mode: host  
@@ -108,4 +108,3 @@ services:
       
 networks:
   net:
-    
