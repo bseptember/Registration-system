@@ -1,4 +1,6 @@
-# Backend registration server system for clients
+# Registration-system
+
+Backend registration server system for clients. The following is used in this setup.
 
 Keycloak, LDAP, and local user registrations, and rabbitmq
 
