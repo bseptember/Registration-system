@@ -4,6 +4,13 @@ Backend registration server system for clients. The following is used in this se
 
 Keycloak, LDAP, and local user registrations, and rabbitmq
 
+## Prerequisites
+
+Operating System: Ubuntu (any version)
+
+Docker: Docker Engine & Docker Compose
+
+
 ## Quick start
 
 Generates some self-signed certificates, so that authentication involving keycloak can more realistically
