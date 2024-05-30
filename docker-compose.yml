@@ -40,7 +40,7 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: keycloak
+      POSTGRES_DB: postgres
     networks:
       - net
 

@@ -7,9 +7,13 @@ Keycloak, LDAP, and local user registrations, and rabbitmq
 ## Quick start
 
 Generates some self-signed certificates, so that authentication involving keycloak can more realistically
-involve TLS (within the docker network)
+involve TLS (within the docker network).
+
+
+Remember to give the file permission using chmod.
 
 ```
+chmod a+x start.sh
 ./start.sh
 ```
 

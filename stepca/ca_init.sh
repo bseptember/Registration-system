@@ -2,7 +2,7 @@
 set -eo pipefail
 
 ####The following can be edited###############
-export STEPCA_INIT_NAME=EriscoTestCertificate
+export STEPCA_INIT_NAME=TestCertificate
 export STEPCA_INIT_PROVISIONER_NAME=admin
 export STEPCA_INIT_PASSWORD=1234567890
 ##############################################
@@ -94,33 +94,33 @@ if [ ! -f "${STEPPATH}/config/ca.json" ]; then
     init_if_possible
 fi
 
-##### Check if the keys already exists #####
-if sudo softhsm2-util --show-slots | grep "$STEPCA_INIT_NAME" 2> /dev/null; then
-    echo "👆 Token for step CA already initialized. To delete use 'softhsm2-util --delete-token --token $STEPCA_INIT_NAME'"
-else
-    # Key does not exist, initialize the token
-    sudo softhsm2-util --init-token --free --token "$STEPCA_INIT_NAME" --label "$STEPCA_INIT_NAME" --so-pin "$STEPCA_INIT_PASSWORD" --pin "$STEPCA_INIT_PASSWORD"
-fi
+###### Check if the keys already exists #####
+#if sudo softhsm2-util --show-slots | grep "$STEPCA_INIT_NAME" 2> /dev/null; then
+#    echo "👆 Token for step CA already initialized. To delete use 'softhsm2-util --delete-token --token $STEPCA_INIT_NAME'"
+#else
+#    # Key does not exist, initialize the token
+#    sudo softhsm2-util --init-token --free --token "$STEPCA_INIT_NAME" --label "$STEPCA_INIT_NAME" --so-pin "$STEPCA_INIT_PASSWORD" --pin "$STEPCA_INIT_PASSWORD"
+#fi
 
-if step kms key --kms "$PKCS_URI" "pkcs11:id=2000;object=root-ca" 2>/dev/null; then
-    echo "👆 Root-ca key already exists. Skipping kms creation."
-else
-    # Key does not exist, create using kms
-    step kms create --json --kms "$PKCS_URI" "pkcs11:id=2000;object=root-ca"
-    # Create certificate
-    step certificate create --force --profile root-ca --kms "$PKCS_URI" --key "pkcs11:id=2000;object=root-ca" "${STEPCA_INIT_NAME} Root CA" "$STEPPATH/certs/root_ca.crt"
-fi
+#if step kms key --kms "$PKCS_URI" "pkcs11:id=2000;object=root-ca" 2>/dev/null; then
+#    echo "👆 Root-ca key already exists. Skipping kms creation."
+#else
+#    # Key does not exist, create using kms
+#    step kms create --json --kms "$PKCS_URI" "pkcs11:id=2000;object=root-ca"
+#    # Create certificate
+#    step certificate create --force --profile root-ca --kms "$PKCS_URI" --key "pkcs11:id=2000;object=root-ca" "${STEPCA_INIT_NAME} Root CA" "$STEPPATH/certs/root_ca.crt"
+#fi
 
-if step kms key --kms "$PKCS_URI" "pkcs11:id=3000;object=intermediate-ca" 2>/dev/null; then
-    echo "👆 Intermediate key already exists. Skipping kms creation."
-else
-    # Key does not exist, create using kms
-    step kms create --json --kms "$PKCS_URI" "pkcs11:id=3000;object=intermediate-ca"
-    # Create certificate
-    step certificate create --force --profile intermediate-ca --kms "$PKCS_URI" --ca $STEPPATH/certs/root_ca.crt --ca-key "pkcs11:id=2000;object=root-ca" --key "pkcs11:id=3000;object=intermediate-ca" "${STEPCA_INIT_NAME} Intermediate CA" "${STEPPATH}/certs/intermediate_ca.crt"
-    # Change config to ensure using new certificates generated
-    sed -i "s|\"key\": \"${STEPPATH}/secrets/intermediate_ca_key\",|\"key\": \"pkcs11:id=3000;object=intermediate-ca\",\n\t\"kms\": {\n\t\t\"type\": \"pkcs11\",\n\t\t\"uri\": \"pkcs11:module-path=/usr/lib/softhsm/libsofthsm2.so;token=$STEPCA_INIT_NAME;id=1000;object=mykey?pin-value=$STEPCA_INIT_PASSWORD\"\n\t},|" "${STEPPATH}/config/ca.json"
-fi
+#if step kms key --kms "$PKCS_URI" "pkcs11:id=3000;object=intermediate-ca" 2>/dev/null; then
+#    echo "👆 Intermediate key already exists. Skipping kms creation."
+#else
+#    # Key does not exist, create using kms
+#    step kms create --json --kms "$PKCS_URI" "pkcs11:id=3000;object=intermediate-ca"
+#    # Create certificate
+#    step certificate create --force --profile intermediate-ca --kms "$PKCS_URI" --ca $STEPPATH/certs/root_ca.crt --ca-key "pkcs11:id=2000;object=root-ca" --key "pkcs11:id=3000;object=intermediate-ca" "${STEPCA_INIT_NAME} Intermediate CA" "${STEPPATH}/certs/intermediate_ca.crt"
+#    # Change config to ensure using new certificates generated
+#    sed -i "s|\"key\": \"${STEPPATH}/secrets/intermediate_ca_key\",|\"key\": \"pkcs11:id=3000;object=intermediate-ca\",\n\t\"kms\": {\n\t\t\"type\": \"pkcs11\",\n\t\t\"uri\": \"pkcs11:module-path=/usr/lib/softhsm/libsofthsm2.so;token=$STEPCA_INIT_NAME;id=1000;object=mykey?pin-value=$STEPCA_INIT_PASSWORD\"\n\t},|" "${STEPPATH}/config/ca.json"
+#fi
 
 # Start step ca
 cp /ca.json $STEPPATH/config/ca.json

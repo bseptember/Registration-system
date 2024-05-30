@@ -9,7 +9,7 @@ RUN apt-get install openssl -y
 RUN apt-get install softhsm2 -y
 RUN apt-get install nano -y
 RUN apt-get install ca-certificates -y
-RUN apt-get install netcat -y
+RUN apt-get install netcat-openbsd -y
 
 # Add step, step-ca, step-kms
 COPY --from=stepca /usr/local/bin/* /usr/local/bin/

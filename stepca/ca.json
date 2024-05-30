@@ -2,11 +2,7 @@
 	"root": "/root/.step/certs/root_ca.crt",
 	"federatedRoots": null,
 	"crt": "/root/.step/certs/intermediate_ca.crt",
-	"key": "pkcs11:id=3000;object=intermediate-ca",
-	"kms": {
-		"type": "pkcs11",
-		"uri": "pkcs11:module-path=/usr/lib/softhsm/libsofthsm2.so;token=EriscoTestCertificate;id=1000;object=mykey?pin-value=1234567890"
-	},
+	"key": "/root/.step/secrets/intermediate_ca_key",
 	"address": ":9000",
 	"insecureAddress": "",
 	"dnsNames": [
