@@ -14,13 +14,14 @@ Docker: Docker Engine & Docker Compose
 ## Quick start
 
 Generates some self-signed certificates, so that authentication involving keycloak can more realistically
-involve TLS (within the docker network).
+involve TLS (within the docker network). 
 
-
-Remember to give the file permission using chmod.
+1. Copy/Clone the repo.
+2. Give permission using chmod to the directory
+3. Change REMOTE_CLIENT_IP in the start.sh file to your client IP address.
 
 ```
-chmod a+x start.sh
+sudo chmod -R 777 Registration-system 
 ./start.sh
 ```
 
